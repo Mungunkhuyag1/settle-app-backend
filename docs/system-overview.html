@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="mn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settle Backend System Overview</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --panel: #fffdf8;
+        --ink: #1f1f1a;
+        --muted: #6d685e;
+        --line: #ddd4c7;
+        --accent: #0d5c63;
+        --accent-soft: #dff0ee;
+        --warn: #7a3e00;
+        --warn-soft: #fff1e3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: linear-gradient(180deg, #efe9dd 0%, var(--bg) 100%);
+        color: var(--ink);
+        line-height: 1.55;
+      }
+
+      .wrap {
+        width: min(1200px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 80px;
+      }
+
+      .hero {
+        background: radial-gradient(circle at top right, #d7edea, transparent 32%),
+          linear-gradient(135deg, #103b44, #0d5c63 52%, #14767e);
+        color: white;
+        border-radius: 24px;
+        padding: 36px;
+        box-shadow: 0 20px 50px rgba(16, 59, 68, 0.18);
+      }
+
+      .hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(32px, 6vw, 56px);
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 760px;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 17px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 18px;
+        margin-top: 22px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 10px 24px rgba(49, 43, 32, 0.04);
+      }
+
+      .card h2,
+      .card h3 {
+        margin-top: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .span-12 {
+        grid-column: span 12;
+      }
+
+      .span-8 {
+        grid-column: span 8;
+      }
+
+      .span-6 {
+        grid-column: span 6;
+      }
+
+      .span-4 {
+        grid-column: span 4;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--accent-soft);
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .flow {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .flow-step {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 14px;
+        align-items: start;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fff;
+      }
+
+      .step-no {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--accent);
+        color: white;
+        font-weight: 800;
+      }
+
+      .diagram {
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        background: #fff;
+      }
+
+      svg text {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th,
+      .table td {
+        text-align: left;
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+
+      .table th {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      code {
+        background: #f3eee5;
+        border: 1px solid #e6ddd0;
+        border-radius: 8px;
+        padding: 2px 6px;
+        font-family:
+          ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        font-size: 13px;
+      }
+
+      .note {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: var(--warn-soft);
+        border: 1px solid #f1d5b5;
+        color: var(--warn);
+      }
+
+      ul {
+        margin: 10px 0 0 18px;
+      }
+
+      @media (max-width: 900px) {
+        .span-8,
+        .span-6,
+        .span-4 {
+          grid-column: span 12;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="hero">
+        <div class="pill">Settle Backend</div>
+        <h1>Shared Expense Tracking System</h1>
+        <p>
+          Энэ систем нь групп дотор хамтын зардлыг бүртгэж, хэрэглэгч бүрийн
+          авлага, өглөгийг group тус бүрээр тооцоолж, дараа нь бөөнд нь
+          settlement хийх боломж олгоно.
+        </p>
+      </section>
+
+      <section class="grid">
+        <article class="card span-4">
+          <div class="pill">Core Rule</div>
+          <h2>Гол ойлголт</h2>
+          <p class="muted">
+            Нэг хэрэглэгч олон group-д байж болно. Balance нь зөвхөн group-ийн
+            хүрээнд бодогдоно.
+          </p>
+          <ul>
+            <li>Group үүсгэсэн хүн автоматаар owner</li>
+            <li>Owner л member add/remove хийнэ</li>
+            <li>Member бүр expense бүртгэж болно</li>
+            <li>Balance нь expense + settlement дээрээс бодогдоно</li>
+          </ul>
+        </article>
+
+        <article class="card span-4">
+          <div class="pill">Auth</div>
+          <h2>Нэвтрэлт</h2>
+          <p class="muted">
+            Local JWT authentication ашиглаж байна.
+          </p>
+          <ul>
+            <li><code>POST /auth/sign-up</code></li>
+            <li><code>POST /auth/sign-in</code></li>
+            <li><code>GET /auth/me</code></li>
+          </ul>
+        </article>
+
+        <article class="card span-4">
+          <div class="pill">Output</div>
+          <h2>Системийн гаргалгаа</h2>
+          <ul>
+            <li>Group list</li>
+            <li>Expense history</li>
+            <li>Settlement history</li>
+            <li>Net balance</li>
+            <li>Pairwise payable / receivable</li>
+          </ul>
+        </article>
+
+        <article class="card span-8">
+          <div class="pill">Main Flow</div>
+          <h2>Үндсэн ажиллагааны урсгал</h2>
+          <div class="flow">
+            <div class="flow-step">
+              <div class="step-no">1</div>
+              <div>
+                <strong>Хэрэглэгч бүртгүүлж нэвтэрнэ</strong>
+                <div class="muted">
+                  JWT access token авч, хамгаалагдсан endpoint-ууд руу
+                  ашиглана.
+                </div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-no">2</div>
+              <div>
+                <strong>Group үүсгэнэ</strong>
+                <div class="muted">
+                  Group үүсгэсэн хэрэглэгч owner болно. Owner нь бусад
+                  хэрэглэгчдийг group руу нэмнэ.
+                </div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-no">3</div>
+              <div>
+                <strong>Expense бүртгэнэ</strong>
+                <div class="muted">
+                  Нэг payer нийт дүнг төлнө. Participant бүрийн share amount
+                  тусдаа хадгалагдана.
+                </div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-no">4</div>
+              <div>
+                <strong>Balance бодно</strong>
+                <div class="muted">
+                  Net balance болон pairwise өр авлагыг expense +
+                  settlement дээрээс aggregate хийнэ.
+                </div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-no">5</div>
+              <div>
+                <strong>Settlement бүртгэнэ</strong>
+                <div class="muted">
+                  Хоёр хэрэглэгчийн хооронд хийсэн бодит төлөлтийг
+                  бүртгэснээр тухайн pair-ийн өр буурна.
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card span-4">
+          <div class="pill">Balance Logic</div>
+          <h2>Тооцоолол</h2>
+          <table class="table">
+            <tr>
+              <th>Төлөв</th>
+              <th>Утга</th>
+            </tr>
+            <tr>
+              <td><code>netBalance &gt; 0</code></td>
+              <td>Авах ёстой</td>
+            </tr>
+            <tr>
+              <td><code>netBalance &lt; 0</code></td>
+              <td>Өгөх ёстой</td>
+            </tr>
+            <tr>
+              <td><code>netBalance = 0</code></td>
+              <td>Тэнцсэн</td>
+            </tr>
+          </table>
+          <div class="note" style="margin-top: 14px">
+            Pairwise өр нь нэг хүний өрийг өөр хүнд шилжүүлэхгүй. Зөвхөн тухайн
+            2 хүний хоорондын expense ба settlement дээрээс цэвэр үлдэгдэл
+            гаргана.
+          </div>
+        </article>
+
+        <article class="card span-12">
+          <div class="pill">Entity Diagram</div>
+          <h2>Өгөгдлийн холбоос</h2>
+          <div class="diagram">
+            <svg viewBox="0 0 1180 560" width="100%" role="img" aria-label="Entity relationship diagram">
+              <defs>
+                <marker
+                  id="arrow"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="8"
+                  markerHeight="8"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#7b766b"></path>
+                </marker>
+              </defs>
+
+              <rect x="30" y="60" width="220" height="170" rx="18" fill="#fff" stroke="#d9cfbf" />
+              <text x="52" y="92" font-size="22" font-weight="700">users</text>
+              <text x="52" y="122" font-size="14">id</text>
+              <text x="52" y="146" font-size="14">email</text>
+              <text x="52" y="170" font-size="14">password_hash</text>
+              <text x="52" y="194" font-size="14">first_name / last_name</text>
+
+              <rect x="320" y="60" width="220" height="170" rx="18" fill="#fff" stroke="#d9cfbf" />
+              <text x="342" y="92" font-size="22" font-weight="700">groups</text>
+              <text x="342" y="122" font-size="14">id</text>
+              <text x="342" y="146" font-size="14">name</text>
+              <text x="342" y="170" font-size="14">description</text>
+              <text x="342" y="194" font-size="14">created_by → users.id</text>
+
+              <rect x="610" y="40" width="240" height="190" rx="18" fill="#fff" stroke="#d9cfbf" />
+              <text x="632" y="72" font-size="22" font-weight="700">group_members</text>
+              <text x="632" y="102" font-size="14">id</text>
+              <text x="632" y="126" font-size="14">group_id → groups.id</text>
+              <text x="632" y="150" font-size="14">user_id → users.id</text>
+              <text x="632" y="174" font-size="14">role: owner | member</text>
+
+              <rect x="320" y="310" width="240" height="200" rx="18" fill="#fff" stroke="#d9cfbf" />
+              <text x="342" y="342" font-size="22" font-weight="700">expenses</text>
+              <text x="342" y="372" font-size="14">group_id → groups.id</text>
+              <text x="342" y="396" font-size="14">paid_by_user_id → users.id</text>
+              <text x="342" y="420" font-size="14">created_by → users.id</text>
+              <text x="342" y="444" font-size="14">total_amount</text>
+              <text x="342" y="468" font-size="14">expense_date</text>
+
+              <rect x="620" y="310" width="260" height="200" rx="18" fill="#fff" stroke="#d9cfbf" />
+              <text x="642" y="342" font-size="22" font-weight="700">expense_participants</text>
+              <text x="642" y="372" font-size="14">expense_id → expenses.id</text>
+              <text x="642" y="396" font-size="14">user_id → users.id</text>
+              <text x="642" y="420" font-size="14">share_amount</text>
+
+              <rect x="920" y="310" width="230" height="200" rx="18" fill="#fff" stroke="#d9cfbf" />
+              <text x="942" y="342" font-size="22" font-weight="700">settlements</text>
+              <text x="942" y="372" font-size="14">group_id → groups.id</text>
+              <text x="942" y="396" font-size="14">from_user_id → users.id</text>
+              <text x="942" y="420" font-size="14">to_user_id → users.id</text>
+              <text x="942" y="444" font-size="14">amount / settled_at</text>
+
+              <line x1="250" y1="145" x2="320" y2="145" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="250" y1="155" x2="610" y2="155" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="540" y1="145" x2="610" y2="145" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="440" y1="230" x2="440" y2="310" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="560" y1="410" x2="620" y2="410" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="250" y1="195" x2="320" y2="390" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="250" y1="205" x2="620" y2="395" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="250" y1="215" x2="920" y2="400" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+              <line x1="540" y1="185" x2="920" y2="375" stroke="#7b766b" stroke-width="2.2" marker-end="url(#arrow)" />
+            </svg>
+          </div>
+        </article>
+
+        <article class="card span-6">
+          <div class="pill">Expense Example</div>
+          <h2>Expense хэрхэн өр үүсгэдэг вэ</h2>
+          <p>
+            Батаа нийт <code>36,000</code> төгрөг төлсөн гэж бодъё.
+          </p>
+          <table class="table">
+            <tr>
+              <th>Хүн</th>
+              <th>Өөрийн share</th>
+              <th>Net effect</th>
+            </tr>
+            <tr>
+              <td>Батаа</td>
+              <td>12,000</td>
+              <td><code>+24,000</code></td>
+            </tr>
+            <tr>
+              <td>Ганаа</td>
+              <td>15,000</td>
+              <td><code>-15,000</code></td>
+            </tr>
+            <tr>
+              <td>Баяраа</td>
+              <td>9,000</td>
+              <td><code>-9,000</code></td>
+            </tr>
+          </table>
+        </article>
+
+        <article class="card span-6">
+          <div class="pill">Pairwise Example</div>
+          <h2>Settlement хэрхэн pairwise өрийг багасгадаг вэ</h2>
+          <p class="muted">
+            Хоёр хүний хоорондын бодит төлөлт тухайн pair-ийн өрөөс шууд
+            хасагдана.
+          </p>
+          <table class="table">
+            <tr>
+              <th>Алхам</th>
+              <th>Үр дүн</th>
+            </tr>
+            <tr>
+              <td>Expense дараа</td>
+              <td><code>Ганаа → Батаа = 15,000</code></td>
+            </tr>
+            <tr>
+              <td>Settlement 5,000</td>
+              <td><code>Ганаа → Батаа = 10,000</code></td>
+            </tr>
+            <tr>
+              <td>Бусад хүн</td>
+              <td>Баяраагийн өр өөрчлөгдөхгүй</td>
+            </tr>
+          </table>
+        </article>
+
+        <article class="card span-12">
+          <div class="pill">Frontend API</div>
+          <h2>Web frontend-д хамгийн хэрэгтэй endpoint-ууд</h2>
+          <table class="table">
+            <tr>
+              <th>Feature</th>
+              <th>Endpoint</th>
+              <th>Тайлбар</th>
+            </tr>
+            <tr>
+              <td>Login</td>
+              <td><code>POST /auth/sign-in</code></td>
+              <td>JWT token авна</td>
+            </tr>
+            <tr>
+              <td>Dashboard</td>
+              <td><code>GET /users/me/balances</code></td>
+              <td>Group бүр дээрх өөрийн товч balance</td>
+            </tr>
+            <tr>
+              <td>My activity</td>
+              <td><code>GET /users/me/expenses</code></td>
+              <td>Өөрийн expense history</td>
+            </tr>
+            <tr>
+              <td>My settlements</td>
+              <td><code>GET /users/me/settlements</code></td>
+              <td>Өөртэй холбоотой settlement history</td>
+            </tr>
+            <tr>
+              <td>Group detail</td>
+              <td><code>GET /groups/:groupId</code></td>
+              <td>Group мэдээлэл</td>
+            </tr>
+            <tr>
+              <td>Group members</td>
+              <td><code>GET /groups/:groupId/members</code></td>
+              <td>Гишүүдийн жагсаалт</td>
+            </tr>
+            <tr>
+              <td>Group expenses</td>
+              <td><code>GET /groups/:groupId/expenses</code></td>
+              <td>Expense жагсаалт</td>
+            </tr>
+            <tr>
+              <td>Group balances</td>
+              <td><code>GET /groups/:groupId/balances</code></td>
+              <td>Net balance + pairwise өр авлага</td>
+            </tr>
+            <tr>
+              <td>Create expense</td>
+              <td><code>POST /groups/:groupId/expenses</code></td>
+              <td>Шинэ зардал бүртгэх</td>
+            </tr>
+            <tr>
+              <td>Create settlement</td>
+              <td><code>POST /groups/:groupId/settlements</code></td>
+              <td>Төлөлт бүртгэх</td>
+            </tr>
+          </table>
+        </article>
+      </section>
+    </div>
+  </body>
+</html>

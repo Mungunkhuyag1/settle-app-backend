@@ -22,27 +22,34 @@ Use that file as the primary source of truth for future implementation work.
 cp .env.example .env
 ```
 
-### 2. Start with Docker Compose
+Update `.env` with your Neon PostgreSQL connection values.
+
+Recommended:
+
+```env
+DATABASE_URL=postgresql://username:password@your-neon-host.neon.tech/neondb?sslmode=require
+JWT_SECRET=change-this-secret
+JWT_EXPIRES_IN=7d
+```
+
+### 2. Start locally
+
+```bash
+npm install
+npm run start:dev
+```
+
+This starts:
+- `api` on `http://localhost:3002`
+- PostgreSQL is expected to be provided by Neon
+
+### 3. Optional Docker API runtime
 
 ```bash
 docker compose up --build
 ```
 
-This starts:
-- `api` on `http://localhost:3000`
-- `db` on `localhost:5432`
-
-### 3. Stop services
-
-```bash
-docker compose down
-```
-
-To remove the PostgreSQL volume too:
-
-```bash
-docker compose down -v
-```
+This runs only the NestJS API container. Database remains Neon-hosted.
 
 ## Current API
 

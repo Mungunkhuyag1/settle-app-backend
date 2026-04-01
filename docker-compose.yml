@@ -6,37 +6,15 @@ services:
     container_name: settle-api
     command: npm run start:dev
     env_file:
-      - .env.development
+      - .env
     ports:
-      - '${PORT:-3000}:3000'
+      - '${PORT:-3002}:3000'
     environment:
       NODE_ENV: ${NODE_ENV:-development}
-      PORT: ${PORT:-3000}
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: ${DB_NAME:-settle}
-      DB_USER: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      PORT: ${PORT:-3002}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
     volumes:
       - .:/app
       - /app/node_modules
-    depends_on:
-      - db
-
-  db:
-    image: postgres:16-alpine
-    container_name: settle-db
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - '${DB_PORT:-5432}:5432'
-    environment:
-      POSTGRES_DB: ${DB_NAME:-settle}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
