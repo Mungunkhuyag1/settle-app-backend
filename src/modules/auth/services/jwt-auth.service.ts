@@ -34,6 +34,7 @@ export class JwtAuthService {
       dto.email,
       dto.password,
     );
+    console.log('Authenticated user:', user.email);
     return this.createAuthResponse(user);
   }
 
