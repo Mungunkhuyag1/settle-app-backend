@@ -115,6 +115,22 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
+  async listSimpleUsers(): Promise<User[]> {
+    return this.usersRepository.find({
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+      },
+      order: {
+        firstName: 'ASC',
+        lastName: 'ASC',
+        email: 'ASC',
+      },
+    });
+  }
+
   async listUsers(filter: FilterDto): Promise<{
     data: User[];
     total: number;

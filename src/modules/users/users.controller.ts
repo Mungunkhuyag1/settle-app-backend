@@ -24,6 +24,7 @@ import { ExpensesService } from '../expenses/expenses.service';
 import { SettlementResponseDto } from '../settlements/dto/settlement-response.dto';
 import { SettlementsService } from '../settlements/settlements.service';
 import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
+import { UserListItemDto } from './dto/user-list-item.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -106,6 +107,18 @@ export class UsersController {
     @CurrentUser() user: User,
   ): Promise<MyGroupBalanceResponseDto[]> {
     return this.balancesService.getMyBalances(user.id);
+  }
+
+  @Get('list/simple')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary:
+      'Pagination болон filter-гүй, зөвхөн id, name, email буцаадаг user list авна',
+  })
+  @ApiOkResponse({ type: UserListItemDto, isArray: true })
+  async listSimpleUsers(): Promise<UserListItemDto[]> {
+    const users = await this.usersService.listSimpleUsers();
+    return users.map((user) => UserListItemDto.fromEntity(user));
   }
 
   @Get(':id')
