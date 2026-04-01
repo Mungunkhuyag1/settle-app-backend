@@ -74,8 +74,8 @@ Settlement changes balances just like a financial event.
 ### 5.1 User registration
 Initial approach:
 - any employee can register as a user
-- no complex auth flow is required for the assignment
-- basic registration can use `fullName`, `email`, and `password`
+- local JWT authentication is used for v1
+- basic registration can use `email`, `password`, `firstName`, and `lastName`
 
 Future-ready note:
 - this can later be replaced by company SSO without changing the expense domain model
@@ -95,12 +95,18 @@ Additional constraints:
 - participant amounts must be positive
 - expense total must equal the sum of participant shares
 
-### 5.3 Balance meaning
+### 5.3 Group visibility and membership rules
+- a user can only see groups where they are a member
+- the user who creates a group becomes the `owner`
+- only the `owner` can add or remove members
+- any registered user may be added into any group by that group's `owner`
+
+### 5.4 Balance meaning
 For a given group:
 - positive balance: the user should receive money
 - negative balance: the user owes money
 
-### 5.4 Settlement behavior
+### 5.5 Settlement behavior
 When settlement is recorded:
 - corresponding balances decrease accordingly
 - if the full outstanding amount is settled, all affected members reach zero
@@ -111,9 +117,12 @@ When settlement is recorded:
 
 #### `users`
 - `id` uuid pk
-- `full_name` varchar
 - `email` varchar unique
 - `password_hash` varchar
+- `first_name` varchar nullable
+- `last_name` varchar nullable
+- `image_url` text nullable
+- `last_seen_at` timestamptz nullable
 - `created_at` timestamptz
 - `updated_at` timestamptz
 

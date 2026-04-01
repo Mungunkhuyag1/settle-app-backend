@@ -36,7 +36,7 @@ export const getTypeOrmConfig = (
     username,
     password,
     database,
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    autoLoadEntities: true,
     synchronize: configService.get<string>('NODE_ENV') !== 'production', // Auto-sync in dev only
     // logging: configService.get<string>('NODE_ENV') === 'development',
     logging: false,

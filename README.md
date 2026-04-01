@@ -7,6 +7,10 @@ NestJS + PostgreSQL backend for tracking shared lunch expenses inside groups and
 Project requirements and design decisions are documented in:
 
 - `docs/project-overview.md`
+- `docs/auth-users-api.md`
+- `docs/groups-api.md`
+- `docs/expenses-balances-settlements-api.md`
+- `docs/frontend-web-api.md`
 
 Use that file as the primary source of truth for future implementation work.
 
@@ -58,14 +62,21 @@ Example response:
 }
 ```
 
-## Next Implementation Targets
+## Current Modules
 
-- users module
-- groups module
-- group members module
-- expenses module
-- balances module
-- settlements module
+- auth
+- users
+- groups
+- group members
+- expenses
+- balances
+- settlements
+
+## User-Centric APIs
+
+- `GET /api/v1/users/me/expenses`
+- `GET /api/v1/users/me/settlements`
+- `GET /api/v1/users/me/balances`
 
 ## Test Commands
 
