@@ -51,6 +51,26 @@ docker compose up --build
 
 This runs only the NestJS API container. Database remains Neon-hosted.
 
+## Render Deploy
+
+If you are deploying as a native Node service on Render, use:
+
+```txt
+Build Command: npm install && npm run build
+Start Command: npm run start:prod
+```
+
+Required Render environment variables:
+
+```env
+NODE_ENV=production
+DATABASE_URL=postgresql://username:password@your-neon-host.neon.tech/neondb?sslmode=verify-full&channel_binding=require
+JWT_SECRET=change-this-secret
+JWT_EXPIRES_IN=7d
+```
+
+If you are deploying with Docker on Render, this repository is now configured to start in production mode by default.
+
 ## Current API
 
 ### Health Check
